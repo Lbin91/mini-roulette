@@ -3,6 +3,7 @@ import { AppData, RouletteList, AppSettings, RouletteItem } from '../../domain/t
 import { rouletteRepository } from '../../infrastructure/storage/rouletteRepository';
 
 interface RouletteStore extends AppData {
+  history: RouletteItem[];
   // Actions
   addList: (list: RouletteList) => void;
   updateList: (list: RouletteList) => void;
@@ -13,16 +14,28 @@ interface RouletteStore extends AppData {
   // Specific Item Actions
   addItemToList: (listId: string, item: RouletteItem) => void;
   removeItemFromList: (listId: string, itemId: string) => void;
+  
+  // History Actions
+  addToHistory: (item: RouletteItem) => void;
+  clearHistory: () => void;
 }
+
+const saveState = (state: RouletteStore) => {
+    rouletteRepository.save({
+        lists: state.lists,
+        settings: state.settings
+    });
+};
 
 export const useRouletteStore = create<RouletteStore>((set) => ({
   // Initial State from Repository
   ...rouletteRepository.load(),
+  history: [],
 
   addList: (list) => {
     set((state) => {
       const newState = { ...state, lists: [...state.lists, list] };
-      rouletteRepository.save(newState);
+      saveState(newState as RouletteStore);
       return newState;
     });
   },
@@ -33,7 +46,7 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
         ...state,
         lists: state.lists.map((l) => (l.id === updatedList.id ? updatedList : l)),
       };
-      rouletteRepository.save(newState);
+      saveState(newState as RouletteStore);
       return newState;
     });
   },
@@ -49,7 +62,7 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
           selectedListId: state.settings.selectedListId === listId ? null : state.settings.selectedListId,
         },
       };
-      rouletteRepository.save(newState);
+      saveState(newState as RouletteStore);
       return newState;
     });
   },
@@ -60,7 +73,7 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
         ...state,
         settings: { ...state.settings, selectedListId: listId },
       };
-      rouletteRepository.save(newState);
+      saveState(newState as RouletteStore);
       return newState;
     });
   },
@@ -71,7 +84,7 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
         ...state,
         settings: { ...state.settings, ...newSettings },
       };
-      rouletteRepository.save(newState);
+      saveState(newState as RouletteStore);
       return newState;
     });
   },
@@ -88,7 +101,7 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
           };
           
           const newState = { ...state, lists: newLists };
-          rouletteRepository.save(newState);
+          saveState(newState as RouletteStore);
           return newState;
       })
   },
@@ -105,8 +118,16 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
           };
           
           const newState = { ...state, lists: newLists };
-          rouletteRepository.save(newState);
+          saveState(newState as RouletteStore);
           return newState;
       })
+  },
+  
+  addToHistory: (item) => {
+      set((state) => ({ history: [item, ...state.history] }));
+  },
+  
+  clearHistory: () => {
+      set({ history: [] });
   }
 }));
