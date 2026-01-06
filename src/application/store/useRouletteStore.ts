@@ -10,21 +10,24 @@ interface RouletteStore extends AppData {
   deleteList: (listId: string) => void;
   selectList: (listId: string | null) => void;
   updateSettings: (settings: Partial<AppSettings>) => void;
-  
+
   // Specific Item Actions
   addItemToList: (listId: string, item: RouletteItem) => void;
   removeItemFromList: (listId: string, itemId: string) => void;
-  
+
   // History Actions
   addToHistory: (item: RouletteItem) => void;
   clearHistory: () => void;
+
+  // Global Actions
+  setWholeData: (data: AppData) => void;
 }
 
 const saveState = (state: RouletteStore) => {
-    rouletteRepository.save({
-        lists: state.lists,
-        settings: state.settings
-    });
+  rouletteRepository.save({
+    lists: state.lists,
+    settings: state.settings
+  });
 };
 
 export const useRouletteStore = create<RouletteStore>((set) => ({
@@ -88,46 +91,58 @@ export const useRouletteStore = create<RouletteStore>((set) => ({
       return newState;
     });
   },
-  
+
   addItemToList: (listId, item) => {
-      set((state) => {
-          const listIndex = state.lists.findIndex(l => l.id === listId);
-          if (listIndex === -1) return state;
-          
-          const newLists = [...state.lists];
-          newLists[listIndex] = {
-              ...newLists[listIndex],
-              items: [...newLists[listIndex].items, item]
-          };
-          
-          const newState = { ...state, lists: newLists };
-          saveState(newState as RouletteStore);
-          return newState;
-      })
+    set((state) => {
+      const listIndex = state.lists.findIndex(l => l.id === listId);
+      if (listIndex === -1) return state;
+
+      const newLists = [...state.lists];
+      newLists[listIndex] = {
+        ...newLists[listIndex],
+        items: [...newLists[listIndex].items, item]
+      };
+
+      const newState = { ...state, lists: newLists };
+      saveState(newState as RouletteStore);
+      return newState;
+    })
   },
-  
+
   removeItemFromList: (listId, itemId) => {
-       set((state) => {
-          const listIndex = state.lists.findIndex(l => l.id === listId);
-          if (listIndex === -1) return state;
-          
-          const newLists = [...state.lists];
-          newLists[listIndex] = {
-              ...newLists[listIndex],
-              items: newLists[listIndex].items.filter(i => i.id !== itemId)
-          };
-          
-          const newState = { ...state, lists: newLists };
-          saveState(newState as RouletteStore);
-          return newState;
-      })
+    set((state) => {
+      const listIndex = state.lists.findIndex(l => l.id === listId);
+      if (listIndex === -1) return state;
+
+      const newLists = [...state.lists];
+      newLists[listIndex] = {
+        ...newLists[listIndex],
+        items: newLists[listIndex].items.filter(i => i.id !== itemId)
+      };
+
+      const newState = { ...state, lists: newLists };
+      saveState(newState as RouletteStore);
+      return newState;
+    })
   },
-  
+
   addToHistory: (item) => {
-      set((state) => ({ history: [item, ...state.history] }));
+    set((state) => ({ history: [item, ...state.history] }));
   },
-  
+
   clearHistory: () => {
-      set({ history: [] });
+    set({ history: [] });
+  },
+
+  setWholeData: (data) => {
+    set((state) => {
+      const newState = {
+        ...state,
+        lists: data.lists,
+        settings: data.settings
+      };
+      saveState(newState as RouletteStore);
+      return newState;
+    });
   }
 }));
