@@ -30,13 +30,13 @@ export const MainPage: React.FC = () => {
                         className={`flex-1 py-3 rounded-md flex items-center justify-center gap-2 font-medium transition-colors ${activeTab === 'roulette' ? 'bg-orange-100 text-orange-600' : 'text-gray-500 hover:bg-gray-50'}`}
                         onClick={() => setActiveTab('roulette')}
                     >
-                        <FaGamepad /> Roulette
+                        <FaGamepad /> 룰렛
                     </button>
                     <button 
                         className={`flex-1 py-3 rounded-md flex items-center justify-center gap-2 font-medium transition-colors ${activeTab === 'list' ? 'bg-orange-100 text-orange-600' : 'text-gray-500 hover:bg-gray-50'}`}
                         onClick={() => setActiveTab('list')}
                     >
-                        <FaList /> Manage List
+                        <FaList /> 리스트 관리
                     </button>
                 </div>
             </div>

@@ -20,19 +20,19 @@ export const parseJSON = async (file: File): Promise<AppData> => {
             try {
                 const text = e.target?.result as string;
                 if (!text) {
-                    reject(new Error('File is empty'));
+                    reject(new Error('파일이 비어있습니다'));
                     return;
                 }
                 const data = JSON.parse(text);
 
                 // Basic validation
                 if (!data || typeof data !== 'object') {
-                    reject(new Error('Invalid JSON format'));
+                    reject(new Error('잘못된 JSON 형식'));
                     return;
                 }
 
                 if (!Array.isArray(data.lists) || !data.settings) {
-                    reject(new Error('Invalid data structure: missing lists or settings'));
+                    reject(new Error('잘못된 데이터 구조: 리스트 또는 설정이 누락되었습니다'));
                     return;
                 }
 

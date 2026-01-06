@@ -45,8 +45,8 @@ export const RouletteView: React.FC = () => {
     if (!selectedList) {
         return (
             <div className="bg-white rounded-xl shadow-lg p-8 h-full flex flex-col items-center justify-center text-center text-gray-500">
-                <p className="text-xl font-medium mb-2">No List Selected</p>
-                <p>Please select or create a list in the management panel to start spinning.</p>
+                <p className="text-xl font-medium mb-2">선택된 리스트 없음</p>
+                <p>룰렛을 돌리려면 관리 패널에서 리스트를 선택하거나 생성해주세요.</p>
             </div>
         );
     }
@@ -54,8 +54,8 @@ export const RouletteView: React.FC = () => {
     if (items.length === 0) {
         return (
             <div className="bg-white rounded-xl shadow-lg p-8 h-full flex flex-col items-center justify-center text-center text-gray-500">
-                <p className="text-xl font-medium mb-2">List is Empty</p>
-                <p>Add some items to "{selectedList.name}" to start spinning!</p>
+                <p className="text-xl font-medium mb-2">리스트가 비어있습니다</p>
+                <p>"{selectedList.name}"에 항목을 추가하고 룰렛을 돌려보세요!</p>
             </div>
         );
     }
@@ -71,7 +71,7 @@ export const RouletteView: React.FC = () => {
                             value={selectedList.id}
                             onChange={(e) => !isSpinning && selectList(e.target.value)}
                             disabled={isSpinning}
-                            title="Switch List"
+                            title="리스트 변경"
                         >
                             {lists.map(list => (
                                 <option key={list.id} value={list.id}>{list.name}</option>
@@ -92,14 +92,14 @@ export const RouletteView: React.FC = () => {
                             onChange={(e) => updateSettings({ allowDuplicatesInSession: e.target.checked })}
                             disabled={isSpinning}
                         />
-                        Allow Dupes
+                        중복 허용
                     </label>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => updateSettings({ soundEnabled: !settings.soundEnabled })}
                         className={settings.soundEnabled ? 'text-green-500 hover:text-green-600' : 'text-gray-400 hover:text-gray-500'}
-                        title={settings.soundEnabled ? "Mute Sound" : "Enable Sound"}
+                        title={settings.soundEnabled ? "음소거" : "소리 켜기"}
                     >
                         {settings.soundEnabled ? '🔊' : '🔇'}
                     </Button>
@@ -137,7 +137,7 @@ export const RouletteView: React.FC = () => {
                                 className="w-full flex items-center justify-center text-3xl font-bold text-gray-400"
                                 style={{ height: ITEM_HEIGHT }}
                             >
-                                Ready?
+                                준비 완료?
                             </div>
                         )}
                     </div>
@@ -168,23 +168,23 @@ export const RouletteView: React.FC = () => {
                     onClick={spin}
                     disabled={isSpinning}
                 >
-                    {isSpinning ? 'Rolling...' : <><FaPlay className="mr-3 text-lg" /> SPIN</>}
+                    {isSpinning ? '돌아가는 중...' : <><FaPlay className="mr-3 text-lg" /> 시작!</>}
                 </Button>
             </div>
 
             {/* Session History (Mini) */}
             <div className="mt-8 border-t pt-4">
                 <div className="flex justify-between items-center mb-3">
-                    <h4 className="text-sm font-semibold text-gray-500 flex items-center gap-2"><FaHistory /> Session History</h4>
+                    <h4 className="text-sm font-semibold text-gray-500 flex items-center gap-2"><FaHistory /> 당첨 기록</h4>
                     {history.length > 0 && (
                         <button onClick={clearHistory} className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 font-medium transition-colors">
-                            <FaUndo /> Clear
+                            <FaUndo /> 초기화
                         </button>
                     )}
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide min-h-[32px]">
                     {history.length === 0 ? (
-                        <span className="text-xs text-gray-400 italic">No history yet. Spin the wheel!</span>
+                        <span className="text-xs text-gray-400 italic">아직 기록이 없습니다. 룰렛을 돌려보세요!</span>
                     ) : (
                         history.map((h, i) => (
                             <span key={i} className="px-3 py-1 bg-gray-100 rounded-full text-sm whitespace-nowrap text-gray-700 border border-gray-200">
